@@ -10,8 +10,6 @@ fn main() {
     let response: String;
     let surf_days = get_surfdays();
 
-    println!("{:#?}", surf_days);
-
     match surf_days.first() {
         Some(surf_day) => response = format!("Du kan surfe d. {} på {}", surf_day.day, spots_to_string(&surf_day.spots)),
         None => response = "Du kan ikke surfe.".to_string(),
