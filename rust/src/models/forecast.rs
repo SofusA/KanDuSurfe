@@ -36,15 +36,15 @@ pub struct Instant {
 #[serde(rename_all = "camelCase")]
 pub struct Details {
     #[serde(rename = "air_pressure_at_sea_level")]
-    pub air_pressure_at_sea_level: f64,
+    pub air_pressure_at_sea_level: f32,
     #[serde(rename = "air_temperature")]
-    pub air_temperature: f64,
+    pub air_temperature: f32,
     #[serde(rename = "cloud_area_fraction")]
-    pub cloud_area_fraction: f64,
+    pub cloud_area_fraction: f32,
     #[serde(rename = "relative_humidity")]
-    pub relative_humidity: f64,
+    pub relative_humidity: f32,
     #[serde(rename = "wind_from_direction")]
-    pub wind_from_direction: f64,
+    pub wind_from_direction: f32,
     #[serde(rename = "wind_speed")]
-    pub wind_speed: f64,
+    pub wind_speed: f32,
 }

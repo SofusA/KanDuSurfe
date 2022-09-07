@@ -24,10 +24,10 @@ pub fn get_surfdays() -> Vec<SurfDay> {
 
     for spot in spots {
         let forecast = get_forecast(&spot);
-        //let mut surf_days = HashSet::<String>::new();
 
         for timeserie in forecast.properties.timeseries {
             let datetime = DateTime::parse_from_rfc3339(&timeserie.time).expect("Error reading time format");
+            let day = datetime.format("%y/%m/%d").to_string();
 
             let forecast_hour = datetime.hour();
             let forecast_data = timeserie.data.instant.details;
@@ -41,8 +41,6 @@ pub fn get_surfdays() -> Vec<SurfDay> {
             if !surfable_direction(&spot.directions, &forecast_data.wind_from_direction) {
                 continue;
             };
-
-            let day = datetime.format("%y/%m/%d").to_string();
 
             let matcher = response.iter_mut().find(|surf_day| surf_day.day == day);
 
@@ -70,15 +68,62 @@ pub fn get_surfdays() -> Vec<SurfDay> {
     return response;
 }
 
-fn surfable_direction(allowed_directions: &Vec<Direction>, forecast_wind_direction: &f64) -> bool
+fn surfable_direction(allowed_directions: &Vec<Direction>, forecast_wind_direction: &f32) -> bool
 {
     for direction in allowed_directions {
-        let min = direction.minimum as f64;
-        let max = direction.maximum as f64;
+        let min = direction.minimum as f32;
+        let max = direction.maximum as f32;
 
-        if forecast_wind_direction.min(min).eq(forecast_wind_direction) && forecast_wind_direction.max(max).eq(forecast_wind_direction){
+        if !is_lower(forecast_wind_direction, min) && is_lower(forecast_wind_direction, max) {
             return true;
         }   
     }
+
     return false;
+}
+
+fn is_lower(first: &f32, second: f32) -> bool {
+    return first.min(second).eq(first);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+
+    #[test]
+    fn test_is_lower() {
+        let low: f32 = 5.0;
+        let high: f32 = 10.0;
+        
+        assert_eq!(is_lower(&low, high), true);
+    }
+
+    #[test]
+    fn test_surfable_direction_returns_true() {
+        let allowed_dir: f32 = 100.0;
+        let forecast_dir = vec![Direction {minimum: 50, maximum: 150}];
+
+        assert_eq!(surfable_direction(&forecast_dir, &allowed_dir), true);
+    }
+
+    #[test]
+    fn test_surfable_direction_returns_false() {
+        let allowed_dir: f32 = 150.0;
+        let forecast_dir = vec![Direction {minimum: 50, maximum: 100}];
+
+        assert_eq!(surfable_direction(&forecast_dir, &allowed_dir), false);
+    }
+
+    #[test]
+    fn test_surfable_direction_vec() {
+        let allowed_dir: f32 = 15.0;
+        let not_allowed_dir: f32 = 30.0;
+        let forecast_dir = vec![Direction {minimum: 10, maximum: 20}, Direction {minimum: 50, maximum: 100}];
+
+        assert_eq!(surfable_direction(&forecast_dir, &allowed_dir), true);
+        assert_eq!(surfable_direction(&forecast_dir, &not_allowed_dir), false);
+    }
+
+    
 }
