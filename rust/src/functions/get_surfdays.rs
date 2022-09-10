@@ -13,7 +13,7 @@ pub struct SurfDay {
     pub spots: HashSet<String>,
 }
 
-pub fn get_surfdays() -> Vec<SurfDay> {
+pub async fn get_surfdays() -> Vec<SurfDay> {
     let mut response = Vec::<SurfDay>::new();
     let spots = get_spots();
     let surf_constants = SurfConstants {
@@ -23,7 +23,7 @@ pub fn get_surfdays() -> Vec<SurfDay> {
     };
 
     for spot in spots {
-        let forecast = get_forecast(&spot);
+        let forecast = get_forecast(&spot).await;
 
         for timeserie in forecast.properties.timeseries {
             let datetime = DateTime::parse_from_rfc3339(&timeserie.time).expect("Error reading time format");

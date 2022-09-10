@@ -14,7 +14,6 @@ async fn get_forecast_response(spot: &Spot) -> Result<ForeCastRoot, reqwest::Err
     Ok(forecast_root)
 }
 
-#[tokio::main]
 pub async fn get_forecast(spot: &Spot) -> ForeCastRoot {
     let forecast = get_forecast_response(spot).await.expect("Failed recieving forecast");
     return forecast;

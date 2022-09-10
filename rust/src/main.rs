@@ -1,23 +1,23 @@
-use std::collections::HashSet;
-use itertools::Itertools;
+use functions::get_response::get_response;
 
-use crate::functions::get_surfdays::get_surfdays;
+use std::env;
+use std::net::Ipv4Addr;
+use warp::Filter;
 
 mod models;
 mod functions;
 
-fn main() {
-    let response: String;
-    let surf_days = get_surfdays();
+#[tokio::main]
+async fn main() {
+    let response = get_response().await;
 
-    match surf_days.first() {
-        Some(surf_day) => response = format!("Du kan surfe d. {} på {}", surf_day.day, spots_to_string(&surf_day.spots)),
-        None => response = "Du kan ikke surfe.".to_string(),
-    }
+    let api = warp::path!("api" / "v1").map(move || format!("{}", response));
 
-    println!("{:#?}", response);
-}
+    let port_key = "FUNCTIONS_CUSTOMHANDLER_PORT";
+    let port: u16 = match env::var(port_key) {
+        Ok(val) => val.parse().expect("Custom Handler port is not a number!"),
+        Err(_) => 3000,
+    };
 
-fn spots_to_string(spots: &HashSet<String>) -> String {
-    return spots.iter().join(" og ");
+    warp::serve(api).run((Ipv4Addr::LOCALHOST, port)).await
 }
