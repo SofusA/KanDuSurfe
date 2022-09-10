@@ -5,11 +5,11 @@ use crate::functions::get_spots::get_spots;
 use crate::models::spot::Direction;
 use crate::models::surf_constants::SurfConstants;
 
-use chrono::{DateTime, Timelike};
+use chrono::{DateTime, Timelike, FixedOffset};
 
 #[derive(Debug)]
 pub struct SurfDay {
-    pub day: String,
+    pub day: DateTime<FixedOffset>,
     pub spots: HashSet<String>,
 }
 
@@ -27,7 +27,6 @@ pub async fn get_surfdays() -> Vec<SurfDay> {
 
         for timeserie in forecast.properties.timeseries {
             let datetime = DateTime::parse_from_rfc3339(&timeserie.time).expect("Error reading time format");
-            let day = datetime.format("%y/%m/%d").to_string();
 
             let forecast_hour = datetime.hour();
             let forecast_data = timeserie.data.instant.details;
@@ -42,20 +41,18 @@ pub async fn get_surfdays() -> Vec<SurfDay> {
                 continue;
             };
 
-            let matcher = response.iter_mut().find(|surf_day| surf_day.day == day);
+            let matcher = response.iter_mut().find(|surf_day| surf_day.day.date() == datetime.date());
 
             match matcher {
                 Some(surf_day)=> {
-                    surf_day.spots.insert(spot.name);
-
-                    break;
+                    surf_day.spots.insert(spot.name.clone());
                 },
                 None => {
                     let mut spot_name_hashset = HashSet::new();
                     spot_name_hashset.insert(spot.name.clone());
 
                     response.push(SurfDay{
-                        day: day,
+                        day: datetime,
                         spots: spot_name_hashset
                     })
                 }
@@ -90,7 +87,6 @@ fn is_lower(first: &f32, second: f32) -> bool {
 mod tests {
     use super::*;
 
-
     #[test]
     fn test_is_lower() {
         let low: f32 = 5.0;
@@ -124,6 +120,4 @@ mod tests {
         assert_eq!(surfable_direction(&forecast_dir, &allowed_dir), true);
         assert_eq!(surfable_direction(&forecast_dir, &not_allowed_dir), false);
     }
-
-    
 }
