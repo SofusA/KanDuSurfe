@@ -7,8 +7,6 @@ pub async fn get_response() -> Result<impl warp::Reply, Infallible> {
     let response: String;
     let surf_days = get_surfdays().await;
 
-    print!("{:#?}", surf_days);
-
     match surf_days.first() {
         Some(surf_day) => {
             response = format!(
