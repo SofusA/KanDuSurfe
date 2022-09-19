@@ -11,6 +11,7 @@ chrono = "0.4.22"
 itertools = "0.10.3"
 warp = "0.3.2"
 openssl-sys = { version = "0.9.75", features = ["vendored"] }
+serde_json = "1.0.85"
 
 [features]
 vendored = ["openssl-sys/vendored"]
