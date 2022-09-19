@@ -9,7 +9,7 @@ mod functions;
 
 #[tokio::main]
 async fn main() {
-    let api = warp::path!("api" / "KanDuSurfe").and_then(get_response);
+    let api = warp::path!("api" / "v1").and_then(get_response);
 
     let port_key = "FUNCTIONS_CUSTOMHANDLER_PORT";
     let port: u16 = match env::var(port_key) {
