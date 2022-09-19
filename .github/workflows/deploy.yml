@@ -34,7 +34,7 @@ jobs:
         run: cargo build --release --target x86_64-unknown-linux-musl
 
       - name: Deploy | Compress deploy package
-        run: zip -r deploy.zip ./target/x86_64-unknown-linux-musl/release/handler v* host.json
+        run: zip -r -j deploy.zip ./target/x86_64-unknown-linux-musl/release/handler v* host.json
 
       - name: Deploy | Authenticate
         uses: azure/login@v1
