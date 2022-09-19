@@ -28,16 +28,13 @@ jobs:
         run: sudo apt install -y musl-tools
 
       - name: Build | Tests
-        run: cargo test --release --target x86_64-unknown-linux-musl -- --nocapture
+        run: cargo test --release --target x86_64-unknown-linux-musl
 
       - name: Build | Build
         run: cargo build --release --target x86_64-unknown-linux-musl
 
-      - name: Deploy | Move binary
-        run: mv ./target/x86_64-unknown-linux-musl/release/handler .
-
       - name: Deploy | Compress deploy package
-        run: zip -r deploy.zip . -x '*.git*' -x '*target*' -x '*src*'
+        run: zip -r deploy.zip ./target/x86_64-unknown-linux-musl/release/handler ${{ secrets.AZURE_APP_NAME }} host.json
 
       - name: Deploy | Authenticate
         uses: azure/login@v1
