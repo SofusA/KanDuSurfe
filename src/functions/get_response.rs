@@ -8,9 +8,7 @@ use super::get_surfdays::get_surfdays;
 
 pub async fn get_response() -> Result<impl warp::Reply, Infallible> {
     let response: Response;
-
     let surf_days = get_surfdays().await;
-
     let condition = surf_days.first().filter(|surf_day| in_future_range(surf_day.day, Duration::days(3)));
 
     match condition {
