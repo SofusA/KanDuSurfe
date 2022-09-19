@@ -12,6 +12,7 @@ itertools = "0.10.3"
 warp = "0.3.2"
 openssl-sys = { version = "0.9.75", features = ["vendored"] }
 serde_json = "1.0.85"
+async-trait = "0.1.57"
 
 [features]
 vendored = ["openssl-sys/vendored"]

@@ -1,19 +1,18 @@
 use std::collections::HashSet;
-
-use crate::functions::get_forecast::get_forecast;
-use crate::functions::get_spots::get_spots;
-use crate::models::spot::Direction;
-use crate::models::surf_constants::SurfConstants;
-
 use chrono::{DateTime, Timelike, FixedOffset};
 
-#[derive(Debug)]
+
+use crate::functions::get_spots::get_spots;
+use crate::models::forecast::ForecastProvider;
+use crate::models::spot::{Direction};
+use crate::models::surf_constants::SurfConstants;
+
 pub struct SurfDay {
     pub day: DateTime<FixedOffset>,
     pub spots: HashSet<String>,
 }
 
-pub async fn get_surfdays() -> Vec<SurfDay> {
+pub async fn get_surfdays(provider: impl ForecastProvider) -> Vec<SurfDay> {
     let mut response = Vec::<SurfDay>::new();
     let spots = get_spots();
     let surf_constants = SurfConstants {
@@ -23,7 +22,7 @@ pub async fn get_surfdays() -> Vec<SurfDay> {
     };
 
     for spot in spots {
-        let forecast = get_forecast(&spot).await;
+        let forecast = provider.get_forecast(&spot).await;
 
         for timeserie in forecast.properties.timeseries {
             let datetime = DateTime::parse_from_rfc3339(&timeserie.time).expect("Error reading time format");

@@ -1,15 +1,60 @@
-use chrono::Duration;
+use async_trait::async_trait;
 use chrono::prelude::*;
+use chrono::Duration;
 use itertools::Itertools;
+use reqwest::header::USER_AGENT;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, convert::Infallible};
+
+use crate::models::forecast::ForeCastRoot;
+use crate::models::forecast::ForecastProvider;
+use crate::models::spot::Spot;
 
 use super::get_surfdays::get_surfdays;
 
 pub async fn get_response() -> Result<impl warp::Reply, Infallible> {
+    let yr_forecast: YrForecast = ForecastProvider::new();
+
+    let response = get_forecast_from_provider(yr_forecast).await;
+
+    let json_response = serde_json::to_string(&response).unwrap();
+
+    return Ok(json_response);
+}
+
+struct YrForecast {}
+
+#[async_trait]
+impl ForecastProvider for YrForecast {
+    async fn get_forecast(&self, spot: &Spot) -> ForeCastRoot {
+        let forecast_root = reqwest::Client::new()
+            .get(format!(
+                "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat={}&lon={}",
+                spot.latitude, spot.longitude
+            ))
+            .header(USER_AGENT, "KanDuSurfe")
+            .send()
+            .await
+            .expect("Failed recieving forecast")
+            .json()
+            .await
+            .expect("Failed deserialise json");
+
+        return forecast_root;
+    }
+
+    fn new() -> YrForecast {
+        return YrForecast {};
+    }
+}
+
+async fn get_forecast_from_provider(provider: impl ForecastProvider) -> Response {
     let response: Response;
-    let surf_days = get_surfdays().await;
-    let condition = surf_days.first().filter(|surf_day| in_future_range(surf_day.day, Duration::days(3)));
+
+    let surf_days = get_surfdays(provider).await;
+    let condition = surf_days
+        .first()
+        .filter(|surf_day| in_future_range(surf_day.day, Duration::days(3)));
 
     match condition {
         Some(surf_day) => {
@@ -30,9 +75,7 @@ pub async fn get_response() -> Result<impl warp::Reply, Infallible> {
         }
     }
 
-    let json_response = serde_json::to_string(&response).unwrap();
-
-    return Ok(json_response);
+    return response;
 }
 
 fn spots_to_string(spots: &HashSet<String>) -> String {

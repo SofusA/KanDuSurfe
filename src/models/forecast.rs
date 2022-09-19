@@ -1,4 +1,12 @@
 use serde::{Deserialize, Serialize};
+use async_trait::async_trait;
+use super::spot::Spot;
+
+#[async_trait]
+pub trait ForecastProvider {
+    async fn get_forecast(&self, spot: &Spot) -> ForeCastRoot;
+    fn new() -> Self;
+}
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
