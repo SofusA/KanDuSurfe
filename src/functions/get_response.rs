@@ -6,12 +6,6 @@ use std::{collections::HashSet, convert::Infallible};
 
 use super::get_surfdays::get_surfdays;
 
-pub fn in_future_range(input_dt: DateTime<FixedOffset>, range_dur: Duration) -> bool {
-    let utc_now_dt = Utc::now();
-
-    return utc_now_dt < input_dt && input_dt <= utc_now_dt + range_dur;
-}
-
 pub async fn get_response() -> Result<impl warp::Reply, Infallible> {
     let response: Response;
 
@@ -47,8 +41,14 @@ fn spots_to_string(spots: &HashSet<String>) -> String {
     return spots.iter().join(" og ");
 }
 
+fn in_future_range(input_dt: DateTime<FixedOffset>, range_dur: Duration) -> bool {
+    let utc_now_dt = Utc::now();
+
+    return utc_now_dt < input_dt && input_dt <= utc_now_dt + range_dur;
+}
+
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Response {
-    pub msg: String,
-    pub surfable: bool,
+struct Response {
+    msg: String,
+    surfable: bool,
 }
