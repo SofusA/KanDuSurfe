@@ -15,7 +15,7 @@ impl ForecastProvider for TestForecast {
         let forecast_root = ForeCastRoot {
             properties: Properties {
                 timeseries: vec![Series {
-                    time: "2022-09-20T08:00:00Z".to_string(),
+                    time: "2022-09-20T10:00:00Z".to_string(),
                     data: Data {
                         instant: Instant {
                             details: Details {
@@ -48,6 +48,8 @@ mod tests {
     async fn get_forecast_from_provider_test() {
         let test_forecast_provider: TestForecast = ForecastProvider::new();
         let forecast = get_forecast_from_provider(test_forecast_provider).await;
+
+        print!("{:?}", forecast);
 
         assert_eq!(forecast.msg.contains("2022-09-20"), true);
         assert_eq!(forecast.msg.contains("Amager Strandpark"), true);
