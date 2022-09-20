@@ -6,7 +6,7 @@ on:
 
 jobs:
   release:
-    name: Deploy to Azure Function
+    name: Deploy Azure Function
     runs-on: ubuntu-20.04
     steps:
       - name: Setup | Checkout code
@@ -50,14 +50,14 @@ jobs:
 
   test_deployment:
     needs: release
-    name: Test Deployment
+    name: Test
     runs-on: ubuntu-20.04
     steps:
     - name: Make Request
       id: httpTest
       uses: fjogeleit/http-request-action@v1
       with:
-        url: "https://${{ secrets.AZURE_APP_NAME }}.azurewebsites.net/api/v1"
+        url: "https://${{ secrets.AZURE_APP_NAME }}.azurewebsites.net/api/v2"
     - name: Show Response
       run: |
         echo ${{ steps.httpTest.outputs.response }}
