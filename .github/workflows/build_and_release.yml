@@ -98,6 +98,7 @@ jobs:
       with:
         method: GET
         url: "https://${{ secrets.AZURE_APP_NAME }}.azurewebsites.net/api/v1"
+        timeout: 30000
     - name: Deploy Test | Show Response
       run: |
         echo ${{ steps.httpTest.outputs.response }}
