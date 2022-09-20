@@ -3,21 +3,20 @@ use chrono::prelude::*;
 use chrono::Duration;
 use itertools::Itertools;
 use reqwest::header::USER_AGENT;
-use serde::{Deserialize, Serialize};
+
 use std::{collections::HashSet, convert::Infallible};
 
 use crate::models::forecast::ForeCastRoot;
 use crate::models::forecast::ForecastProvider;
+use crate::models::response::Response;
 use crate::models::spot::Spot;
 
 use super::get_surfdays::get_surfdays;
 
 pub async fn get_response() -> Result<impl warp::Reply, Infallible> {
     let yr_forecast: YrForecast = ForecastProvider::new();
-
     let response = get_forecast_from_provider(yr_forecast).await;
-
-    let json_response = serde_json::to_string(&response).unwrap();
+    let json_response = serde_json::to_string(&response).expect("Failed serialising json");
 
     return Ok(json_response);
 }
@@ -48,7 +47,7 @@ impl ForecastProvider for YrForecast {
     }
 }
 
-async fn get_forecast_from_provider(provider: impl ForecastProvider) -> Response {
+pub async fn get_forecast_from_provider(provider: impl ForecastProvider) -> Response {
     let response: Response;
 
     let surf_days = get_surfdays(provider).await;
@@ -86,10 +85,4 @@ fn in_future_range(input_dt: DateTime<FixedOffset>, range_dur: Duration) -> bool
     let utc_now_dt = Utc::now();
 
     return utc_now_dt < input_dt && input_dt <= utc_now_dt + range_dur;
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct Response {
-    msg: String,
-    surfable: bool,
 }

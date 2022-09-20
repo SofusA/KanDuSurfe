@@ -43,12 +43,8 @@ pub struct Instant {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Details {
-    #[serde(rename = "air_pressure_at_sea_level")]
-    pub air_pressure_at_sea_level: f32,
     #[serde(rename = "air_temperature")]
     pub air_temperature: f32,
-    #[serde(rename = "cloud_area_fraction")]
-    pub cloud_area_fraction: f32,
     #[serde(rename = "relative_humidity")]
     pub relative_humidity: f32,
     #[serde(rename = "wind_from_direction")]

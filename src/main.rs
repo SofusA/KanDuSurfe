@@ -1,11 +1,8 @@
-use functions::get_response::get_response;
-
 use std::env;
 use std::net::Ipv4Addr;
 use warp::Filter;
 
-mod models;
-mod functions;
+use handler::functions::get_response::get_response;
 
 #[tokio::main]
 async fn main() {
