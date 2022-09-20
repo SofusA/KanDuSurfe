@@ -5,9 +5,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  test: Build and Test
-  runs-on: ubuntu-20.04
-  steps:
+  test:
+    name: Build and Test
+    runs-on: ubuntu-20.04
+    steps:
       - name: Setup | Checkout code
         uses: actions/checkout@v2
 
