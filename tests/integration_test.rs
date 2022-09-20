@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use handler::{
+use handler_lib::{
     functions::get_response::get_forecast_from_provider,
     models::{
         forecast::{Data, Details, ForeCastRoot, ForecastProvider, Instant, Properties, Series},
