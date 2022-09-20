@@ -5,10 +5,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  release:
-    name: Deploy Azure Function
-    runs-on: ubuntu-20.04
-    steps:
+  test: Build and Test
+  runs-on: ubuntu-20.04
+  steps:
       - name: Setup | Checkout code
         uses: actions/checkout@v2
 
@@ -34,6 +33,45 @@ jobs:
       - name: Build | Build
         run: cargo build --release --target x86_64-unknown-linux-musl
 
+      - name: Test | Start
+        run: cargo run --release &
+
+      - name: Test | Make Request
+        id: httpTest
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: "https://127.0.0.1:3000/api/v1"
+      - name: Test | Show Response
+        run: |
+          echo ${{ steps.httpTest.outputs.response }}
+
+  release:
+    needs: test
+    name: Deploy Azure Function
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Setup | Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup | Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          target: x86_64-unknown-linux-musl
+
+      - id: cargo-cache
+        name: Cache
+        uses: Swatinem/rust-cache@v1
+        with:
+          key: release-azure-function
+
+      - name: Setup | musl tools
+        run: sudo apt install -y musl-tools
+
+      - name: Build | Build
+        run: cargo build --release --target x86_64-unknown-linux-musl
+
       - name: Deploy | Move binary
         run: mv ./target/x86_64-unknown-linux-musl/release/handler .
 
@@ -53,11 +91,11 @@ jobs:
     name: Test
     runs-on: ubuntu-20.04
     steps:
-    - name: Make Request
+    - name: Deploy Test | Make Request
       id: httpTest
       uses: fjogeleit/http-request-action@v1
       with:
         url: "https://${{ secrets.AZURE_APP_NAME }}.azurewebsites.net/api/v1"
-    - name: Show Response
+    - name: Deploy Test | Show Response
       run: |
         echo ${{ steps.httpTest.outputs.response }}
