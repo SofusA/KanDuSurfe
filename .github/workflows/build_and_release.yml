@@ -40,6 +40,7 @@ jobs:
         id: httpTest
         uses: fjogeleit/http-request-action@v1
         with:
+          method: GET
           url: "https://127.0.0.1:3000/api/v1"
       - name: Test | Show Response
         run: |
@@ -95,6 +96,7 @@ jobs:
       id: httpTest
       uses: fjogeleit/http-request-action@v1
       with:
+        method: GET
         url: "https://${{ secrets.AZURE_APP_NAME }}.azurewebsites.net/api/v1"
     - name: Deploy Test | Show Response
       run: |
