@@ -1,16 +1,11 @@
 use std::collections::HashSet;
-use chrono::{DateTime, Timelike, FixedOffset};
-
+use chrono::{DateTime, Timelike};
 
 use crate::functions::get_spots::get_spots;
 use crate::models::forecast::ForecastProvider;
 use crate::models::spot::{Direction};
 use crate::models::surf_constants::SurfConstants;
-
-pub struct SurfDay {
-    pub day: DateTime<FixedOffset>,
-    pub spots: HashSet<String>,
-}
+use crate::models::surfday::SurfDay;
 
 pub async fn get_surfdays(provider: impl ForecastProvider) -> Vec<SurfDay> {
     let mut response = Vec::<SurfDay>::new();

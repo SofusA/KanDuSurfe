@@ -50,10 +50,10 @@ mod tests {
         let forecast = get_forecast_from_provider(test_forecast_provider).await;
 
         print!("{:?}", forecast);
+        let forcast_day = forecast.first().unwrap();
 
-        assert_eq!(forecast.msg.contains("2022-09-20"), true);
-        assert_eq!(forecast.msg.contains("Amager Strandpark"), true);
-        assert_eq!(forecast.msg.contains("Sydvestpynten"), false);
-        assert_eq!(forecast.surfable, true);
+        assert_eq!(forcast_day.day, "2022-09-20");
+        assert_eq!(forcast_day.spots.contains("Amager Strandpark"), true);
+        assert_eq!(forcast_day.spots.contains("Sydvestpynten"), false);
     }
 }
