@@ -15,9 +15,7 @@ pub async fn get_response() -> Result<impl warp::Reply, Infallible> {
     let yr_forecast: YrForecast = ForecastProvider::new();
     let response = get_forecast_from_provider(yr_forecast).await;
 
-    print!("{:?}", response);
-
-    if !response.is_empty() {
+    if response.is_empty() {
         return Ok("No surf".to_string());
     }
 
