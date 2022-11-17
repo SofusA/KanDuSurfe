@@ -4,8 +4,7 @@ use std::convert::Infallible;
 use crate::models::forecast::ForeCastRoot;
 use crate::models::forecast::ForecastProvider;
 use crate::models::spot::Spot;
-use crate::models::surfday::SurfDayResponse;
-use crate::models::surfday::convert_surf_day_response;
+use crate::models::surfday::*;
 
 use super::get_surfdays::get_surfdays;
 
@@ -44,22 +43,9 @@ impl ForecastProvider for YrForecast {
 
 pub async fn get_forecast_from_provider(provider: impl ForecastProvider) -> Vec<SurfDayResponse> {
     let surf_days = get_surfdays(provider).await;
-    surf_days.iter().map(|x| convert_surf_day_response(x)).collect()
+    surf_days.iter().map(|x| x.to_response()).collect()
 }
 
 fn serialise_forecast_to_string(forecast: Vec<SurfDayResponse>) -> String {
-    if forecast.is_empty() {
-        return "No surf".to_string();
-    }
-
     serde_json::to_string(&forecast).expect("Failed serialising json")
-}
-
-#[test]
-fn serialise_forecast_to_string_test() {
-    let empty_forecast = Vec::<SurfDayResponse>::new();
-
-    let response = serialise_forecast_to_string(empty_forecast);
-
-    assert_eq!(response, "No surf");
 }

@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 use chrono::{DateTime, FixedOffset};
+use itertools::Itertools;
 use serde::Serialize;
 
 pub struct SurfDay {
@@ -10,15 +11,22 @@ pub struct SurfDay {
 #[derive(Debug, Serialize)]
 pub struct SurfDayResponse {
     pub day: String,
-    pub spots: HashSet<String>,
+    pub spots: Vec<String>,
 }
 
-pub fn convert_surf_day_response(surf_day: &SurfDay) -> SurfDayResponse {
-    let response = SurfDayResponse {
-        day: surf_day.day.format("%Y-%m-%d").to_string(),
-        spots: surf_day.spots.clone(),
-    };
+pub trait ResponseType {
+    fn to_response(&self) -> SurfDayResponse; 
+}
 
-    return response;
-
+impl ResponseType for SurfDay {
+    fn to_response(&self) -> SurfDayResponse {
+        let sorted_spot_names: Vec<String> = self.spots.clone().into_iter().sorted().collect_vec();
+        
+        let response = SurfDayResponse {
+            day: self.day.format("%Y-%m-%d").to_string(),
+            spots: sorted_spot_names,
+        };
+    
+        return response;
+    }
 }

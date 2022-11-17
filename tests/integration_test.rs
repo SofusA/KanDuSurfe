@@ -53,7 +53,7 @@ mod tests {
         let forcast_day = forecast.first().unwrap();
 
         assert_eq!(forcast_day.day, "2022-09-20");
-        assert_eq!(forcast_day.spots.contains("Amager Strandpark"), true);
-        assert_eq!(forcast_day.spots.contains("Sydvestpynten"), false);
+        assert_eq!(forcast_day.spots.contains(&"Amager Strandpark".to_string()), true);
+        assert_eq!(forcast_day.spots.contains(&"Sydvestpynten".to_string()), false);
     }
 }
