@@ -73,6 +73,7 @@ fn surfable_direction(allowed_directions: &Vec<Direction>, forecast_wind_directi
     return false;
 }
 
+
 fn is_lower(first: &f32, second: f32) -> bool {
     return first.min(second).eq(first);
 }
