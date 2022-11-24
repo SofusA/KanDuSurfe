@@ -1,9 +1,9 @@
 use std::collections::HashSet;
-use chrono::{DateTime, Timelike};
+use chrono::{DateTime, Timelike, FixedOffset, Datelike};
 
 use crate::functions::get_spots::get_spots;
 use crate::models::forecast::ForecastProvider;
-use crate::models::spot::{Direction};
+use crate::models::spot::{Direction, CompareDates, DateSpan, Date};
 use crate::models::surf_constants::SurfConstants;
 use crate::models::surfday::SurfDay;
 
@@ -20,22 +20,28 @@ pub async fn get_surfdays(provider: impl ForecastProvider) -> Vec<SurfDay> {
         let forecast = provider.get_forecast(&spot).await;
 
         for timeserie in forecast.properties.timeseries {
-            let datetime = DateTime::parse_from_rfc3339(&timeserie.time).expect("Error reading time format");
+            let date_time = DateTime::parse_from_rfc3339(&timeserie.time).expect("Error reading time format");
 
-            let forecast_hour = datetime.hour();
+            let forecast_hour = date_time.hour();
             let forecast_data = timeserie.data.instant.details;
+
+            if is_date_in_inactive_dates(&date_time, &spot.inactive_dates) {
+                continue;
+            };
 
             if forecast_hour < surf_constants.start_hour || forecast_hour > surf_constants.stop_hour {
                 continue;
             };
+
             if forecast_data.wind_speed < surf_constants.wind_speed {
                 continue;
             };
+
             if !surfable_direction(&spot.directions, &forecast_data.wind_from_direction) {
                 continue;
             };
 
-            let matcher = response.iter_mut().find(|surf_day| surf_day.day.date() == datetime.date());
+            let matcher = response.iter_mut().find(|surf_day| surf_day.day.date() == date_time.date());
 
             match matcher {
                 Some(surf_day)=> {
@@ -46,7 +52,7 @@ pub async fn get_surfdays(provider: impl ForecastProvider) -> Vec<SurfDay> {
                     spot_name_hashset.insert(spot.name.clone());
 
                     response.push(SurfDay{
-                        day: datetime,
+                        day: date_time,
                         spots: spot_name_hashset
                     })
                 }
@@ -59,8 +65,19 @@ pub async fn get_surfdays(provider: impl ForecastProvider) -> Vec<SurfDay> {
     return response;
 }
 
-fn surfable_direction(allowed_directions: &Vec<Direction>, forecast_wind_direction: &f32) -> bool
-{
+fn is_date_in_inactive_dates(date_time: &DateTime<FixedOffset>, inactive_dates: &Vec<DateSpan> ) -> bool {
+    for inactive_date in inactive_dates{
+        let date = Date { day: date_time.day(), month: date_time.month()};
+
+        if inactive_date.is_between_dates(&date) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+fn surfable_direction(allowed_directions: &Vec<Direction>, forecast_wind_direction: &f32) -> bool {
     for direction in allowed_directions {
         let min = direction.minimum as f32;
         let max = direction.maximum as f32;

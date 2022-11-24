@@ -13,7 +13,7 @@ pub fn get_spots() -> Vec<Spot> {
         latitude: 55.653506,
         longitude: 12.645545,
         directions: vec![Direction {minimum: 45, maximum: 157}],
-        inactive_dates: vec![DateSpan {start_date: Date {day: 1, month: 11}, end_date: Date {day: 15, month: 7} }]
+        inactive_dates: vec![]
     },
     Spot {
         name: "Lynæs".to_string(),
@@ -27,7 +27,7 @@ pub fn get_spots() -> Vec<Spot> {
         latitude: 55.559259,
         longitude: 12.612591,
         directions: vec![Direction {minimum: 80, maximum: 180}],
-        inactive_dates: vec![]
+        inactive_dates: vec![DateSpan {start_date: Date {day: 1, month: 11}, end_date: Date {day: 15, month: 7} }]
     },
     Spot {
         name: "Farø".to_string(),

@@ -7,26 +7,22 @@ use handler_lib::{
     },
 };
 
-struct TestForecast {}
+struct TestForecast {
+    timeseries: Vec<Series>
+}
+
+impl TestForecast {
+    fn add_timeseries(&mut self, timeseries: Vec<Series>) {
+        self.timeseries = timeseries;
+    }
+}
 
 #[async_trait]
 impl ForecastProvider for TestForecast {
     async fn get_forecast(&self, _spot: &Spot) -> ForeCastRoot {
         let forecast_root = ForeCastRoot {
             properties: Properties {
-                timeseries: vec![Series {
-                    time: "2022-09-20T10:00:00Z".to_string(),
-                    data: Data {
-                        instant: Instant {
-                            details: Details {
-                                air_temperature: 20.0,
-                                wind_from_direction: 90.0,
-                                relative_humidity: 80.0,
-                                wind_speed: 8.0,
-                            },
-                        },
-                    },
-                }],
+                timeseries: self.timeseries.clone()
             },
         };
 
@@ -34,7 +30,9 @@ impl ForecastProvider for TestForecast {
     }
 
     fn new() -> TestForecast {
-        return TestForecast {};
+        return TestForecast {
+            timeseries: Vec::new()
+        }
     }
 }
 
@@ -46,14 +44,109 @@ mod tests {
 
     #[tokio::test]
     async fn get_forecast_from_provider_test() {
-        let test_forecast_provider: TestForecast = ForecastProvider::new();
-        let forecast = get_forecast_from_provider(test_forecast_provider).await;
+        let mut test_forecast_provider: TestForecast = ForecastProvider::new();
 
-        print!("{:?}", forecast);
+        test_forecast_provider.add_timeseries(vec![Series {
+            time: "2022-09-20T10:00:00Z".to_string(),
+            data: Data {
+                instant: Instant {
+                    details: Details {
+                        air_temperature: 20.0,
+                        wind_from_direction: 90.0,
+                        relative_humidity: 80.0,
+                        wind_speed: 8.0,
+                    },
+                },
+            },
+        }]);
+
+        let forecast = get_forecast_from_provider(test_forecast_provider).await;
         let forcast_day = forecast.first().unwrap();
 
         assert_eq!(forcast_day.day, "2022-09-20");
         assert_eq!(forcast_day.spots.contains(&"Amager Strandpark".to_string()), true);
         assert_eq!(forcast_day.spots.contains(&"Sydvestpynten".to_string()), false);
     }
+
+    #[tokio::test]
+    async fn invalid_dates_test_single() {
+        let mut test_forecast_provider: TestForecast = ForecastProvider::new();
+
+        test_forecast_provider.add_timeseries(vec![Series {
+            time: "2023-02-20T10:00:00Z".to_string(),
+            data: Data {
+                instant: Instant {
+                    details: Details {
+                        air_temperature: 20.0,
+                        wind_from_direction: 100.0,
+                        relative_humidity: 80.0,
+                        wind_speed: 8.0,
+                    },
+                },
+            },
+        }
+        ]);
+
+        let forecast = get_forecast_from_provider(test_forecast_provider).await;
+
+        println!("{:?}", forecast);
+
+        assert_eq!(forecast.first().unwrap().spots.contains(&"Poppelvej".to_string()), false);
+
+    }
+
+/*     #[tokio::test]
+    async fn invalid_dates_test() {
+        let mut test_forecast_provider: TestForecast = ForecastProvider::new();
+
+        test_forecast_provider.add_timeseries(vec![Series {
+            time: "2022-09-20T10:00:00Z".to_string(),
+            data: Data {
+                instant: Instant {
+                    details: Details {
+                        air_temperature: 20.0,
+                        wind_from_direction: 100.0,
+                        relative_humidity: 80.0,
+                        wind_speed: 8.0,
+                    },
+                },
+            },
+        },  
+        Series {
+            time: "2022-11-20T10:00:00Z".to_string(),
+            data: Data {
+                instant: Instant {
+                    details: Details {
+                        air_temperature: 20.0,
+                        wind_from_direction: 100.0,
+                        relative_humidity: 80.0,
+                        wind_speed: 8.0,
+                    },
+                },
+            },
+        },
+        Series {
+            time: "2023-02-20T10:00:00Z".to_string(),
+            data: Data {
+                instant: Instant {
+                    details: Details {
+                        air_temperature: 20.0,
+                        wind_from_direction: 100.0,
+                        relative_humidity: 80.0,
+                        wind_speed: 8.0,
+                    },
+                },
+            },
+        }
+        ]);
+
+        let forecast = get_forecast_from_provider(test_forecast_provider).await;
+
+        println!("{:?}", forecast);
+
+        assert_eq!(forecast[0].spots.contains(&"Poppelvej".to_string()), true);
+        assert_eq!(forecast[1].spots.contains(&"Poppelvej".to_string()), false);
+        assert_eq!(forecast[2].spots.contains(&"Poppelvej".to_string()), false);
+
+    } */
 }
