@@ -58,6 +58,32 @@ mod tests {
                     },
                 },
             },
+        },
+        Series {
+            time: "2022-09-20T11:00:00Z".to_string(),
+            data: Data {
+                instant: Instant {
+                    details: Details {
+                        air_temperature: 20.0,
+                        wind_from_direction: 90.0,
+                        relative_humidity: 80.0,
+                        wind_speed: 8.0,
+                    },
+                },
+            },
+        },
+        Series {
+            time: "2022-09-20T12:00:00Z".to_string(),
+            data: Data {
+                instant: Instant {
+                    details: Details {
+                        air_temperature: 20.0,
+                        wind_from_direction: 90.0,
+                        relative_humidity: 80.0,
+                        wind_speed: 8.0,
+                    },
+                },
+            },
         }]);
 
         let forecast = get_forecast_from_provider(test_forecast_provider).await;
@@ -84,36 +110,9 @@ mod tests {
                     },
                 },
             },
-        }
-        ]);
-
-        let forecast = get_forecast_from_provider(test_forecast_provider).await;
-
-        println!("{:?}", forecast);
-
-        assert_eq!(forecast.first().unwrap().spots.contains(&"Poppelvej".to_string()), false);
-
-    }
-
-/*     #[tokio::test]
-    async fn invalid_dates_test() {
-        let mut test_forecast_provider: TestForecast = ForecastProvider::new();
-
-        test_forecast_provider.add_timeseries(vec![Series {
-            time: "2022-09-20T10:00:00Z".to_string(),
-            data: Data {
-                instant: Instant {
-                    details: Details {
-                        air_temperature: 20.0,
-                        wind_from_direction: 100.0,
-                        relative_humidity: 80.0,
-                        wind_speed: 8.0,
-                    },
-                },
-            },
-        },  
+        },
         Series {
-            time: "2022-11-20T10:00:00Z".to_string(),
+            time: "2023-02-20T12:00:00Z".to_string(),
             data: Data {
                 instant: Instant {
                     details: Details {
@@ -126,7 +125,7 @@ mod tests {
             },
         },
         Series {
-            time: "2023-02-20T10:00:00Z".to_string(),
+            time: "2023-02-20T13:00:00Z".to_string(),
             data: Data {
                 instant: Instant {
                     details: Details {
@@ -144,9 +143,7 @@ mod tests {
 
         println!("{:?}", forecast);
 
-        assert_eq!(forecast[0].spots.contains(&"Poppelvej".to_string()), true);
-        assert_eq!(forecast[1].spots.contains(&"Poppelvej".to_string()), false);
-        assert_eq!(forecast[2].spots.contains(&"Poppelvej".to_string()), false);
+        assert_eq!(forecast.first().unwrap().spots.contains(&"Poppelvej".to_string()), false);
 
-    } */
+    }
 }

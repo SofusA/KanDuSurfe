@@ -20,6 +20,8 @@ pub async fn get_surfdays(provider: impl ForecastProvider) -> Vec<SurfDay> {
     for spot in spots {
         let forecast = provider.get_forecast(&spot).await;
 
+        let mut continuos_counter = 0;
+
         for timeserie in forecast.properties.timeseries {
             let date_time = DateTime::parse_from_rfc3339(&timeserie.time).expect("Error reading time format");
 
@@ -41,6 +43,12 @@ pub async fn get_surfdays(provider: impl ForecastProvider) -> Vec<SurfDay> {
             if !surfable_direction(&spot.directions, &forecast_data.wind_from_direction) {
                 continue;
             };
+
+            continuos_counter += 1;
+
+            if continuos_counter < 3 {
+                continue;
+            }
 
             let matcher = response.iter_mut().find(|surf_day| surf_day.day.date() == date_time.date());
 
@@ -83,7 +91,7 @@ fn surfable_direction(allowed_directions: &Vec<Direction>, forecast_wind_directi
         let min = direction.minimum as f32;
         let max = direction.maximum as f32;
 
-        if !is_lower(forecast_wind_direction, min) && is_lower(forecast_wind_direction, max) {
+        if !is_lower(forecast_wind_direction, &min) && is_lower(forecast_wind_direction, &max) {
             return true;
         }   
     }
@@ -92,8 +100,8 @@ fn surfable_direction(allowed_directions: &Vec<Direction>, forecast_wind_directi
 }
 
 
-fn is_lower(first: &f32, second: f32) -> bool {
-    return first.min(second).eq(first);
+fn is_lower(first: &f32, second: &f32) -> bool {
+    return first.min(*second).eq(first);
 }
 
 #[cfg(test)]
@@ -105,7 +113,7 @@ mod tests {
         let low: f32 = 5.0;
         let high: f32 = 10.0;
         
-        assert_eq!(is_lower(&low, high), true);
+        assert_eq!(is_lower(&low, &high), true);
     }
 
     #[test]
