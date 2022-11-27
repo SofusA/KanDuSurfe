@@ -1,4 +1,5 @@
-use crate::models::spot::{Spot, Direction, DateSpan, Date};
+use crate::models::spot::{Direction, Spot};
+use crate::models::date::{Date, DateSpan};
 
 pub fn get_spots() -> Vec<Spot> {
     let spots = vec![Spot {

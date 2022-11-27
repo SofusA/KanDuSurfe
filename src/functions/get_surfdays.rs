@@ -3,7 +3,8 @@ use chrono::{DateTime, Timelike, FixedOffset, Datelike};
 
 use crate::functions::get_spots::get_spots;
 use crate::models::forecast::ForecastProvider;
-use crate::models::spot::{Direction, CompareDates, DateSpan, Date};
+use crate::models::spot::Direction;
+use crate::models::date::{Date, DateSpan, CompareDates};
 use crate::models::surf_constants::SurfConstants;
 use crate::models::surfday::SurfDay;
 
