@@ -2,3 +2,4 @@ local.settings.json
 deploy.zip
 
 /target
+variables.env
