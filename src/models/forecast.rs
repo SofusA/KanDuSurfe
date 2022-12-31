@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
-use async_trait::async_trait;
 use super::spot::Spot;
+use async_trait::async_trait;
+use serde::{Deserialize, Serialize};
 
 #[async_trait]
 pub trait ForecastProvider {
@@ -20,12 +20,11 @@ pub struct Properties {
     pub timeseries: Vec<Series>,
 }
 
-
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Series {
     pub time: String,
-    pub data: Data, 
+    pub data: Data,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]

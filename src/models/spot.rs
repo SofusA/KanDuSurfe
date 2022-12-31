@@ -5,10 +5,10 @@ pub struct Spot {
     pub latitude: f32,
     pub longitude: f32,
     pub directions: Vec<Direction>,
-    pub inactive_dates: Vec<DateSpan>
+    pub inactive_dates: Vec<DateSpan>,
 }
 
 pub struct Direction {
     pub minimum: u32,
-    pub maximum: u32
+    pub maximum: u32,
 }

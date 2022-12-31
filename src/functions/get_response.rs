@@ -1,10 +1,10 @@
-use async_trait::async_trait;
-use reqwest::header::USER_AGENT;
-use std::convert::Infallible;
 use crate::models::forecast::ForeCastRoot;
 use crate::models::forecast::ForecastProvider;
 use crate::models::spot::Spot;
 use crate::models::surfday::*;
+use async_trait::async_trait;
+use reqwest::header::USER_AGENT;
+use std::convert::Infallible;
 
 use super::get_surfdays::get_surfdays;
 
