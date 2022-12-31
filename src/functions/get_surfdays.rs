@@ -78,9 +78,9 @@ pub async fn get_surfdays(provider: impl ForecastProvider) -> Vec<SurfDay> {
         }
     }
 
-    response.sort_by_key(|x| x.day.clone());
+    response.sort_by_key(|x| x.day);
 
-    return response;
+    response
 }
 
 fn is_date_in_inactive_dates(
@@ -98,7 +98,7 @@ fn is_date_in_inactive_dates(
         }
     }
 
-    return false;
+    false
 }
 
 fn surfable_direction(allowed_directions: &Vec<Direction>, forecast_wind_direction: &f32) -> bool {
@@ -111,11 +111,11 @@ fn surfable_direction(allowed_directions: &Vec<Direction>, forecast_wind_directi
         }
     }
 
-    return false;
+    false
 }
 
 fn is_lower(first: &f32, second: &f32) -> bool {
-    return first.min(*second).eq(first);
+    first.min(*second).eq(first)
 }
 
 #[cfg(test)]
@@ -127,7 +127,7 @@ mod tests {
         let low: f32 = 5.0;
         let high: f32 = 10.0;
 
-        assert_eq!(is_lower(&low, &high), true);
+        assert!(is_lower(&low, &high));
     }
 
     #[test]
@@ -138,7 +138,7 @@ mod tests {
             maximum: 150,
         }];
 
-        assert_eq!(surfable_direction(&forecast_dir, &allowed_dir), true);
+        assert!(surfable_direction(&forecast_dir, &allowed_dir));
     }
 
     #[test]
@@ -149,7 +149,7 @@ mod tests {
             maximum: 100,
         }];
 
-        assert_eq!(surfable_direction(&forecast_dir, &allowed_dir), false);
+        assert!(!surfable_direction(&forecast_dir, &allowed_dir));
     }
 
     #[test]
@@ -167,7 +167,7 @@ mod tests {
             },
         ];
 
-        assert_eq!(surfable_direction(&forecast_dir, &allowed_dir), true);
-        assert_eq!(surfable_direction(&forecast_dir, &not_allowed_dir), false);
+        assert!(surfable_direction(&forecast_dir, &allowed_dir));
+        assert!(!surfable_direction(&forecast_dir, &not_allowed_dir));
     }
 }

@@ -5,7 +5,7 @@ pub fn get_spots() -> Vec<Spot> {
     let spots = vec![
         Spot {
             name: "Sydvestpynten".to_string(),
-            latitude: 55.565231,
+            latitude: 55.565_23,
             longitude: 12.558465,
             directions: vec![Direction {
                 minimum: 180,
@@ -25,7 +25,7 @@ pub fn get_spots() -> Vec<Spot> {
         },
         Spot {
             name: "Lynæs".to_string(),
-            latitude: 55.942500,
+            latitude: 55.942_5,
             longitude: 11.862056,
             directions: vec![Direction {
                 minimum: 135,
@@ -48,7 +48,7 @@ pub fn get_spots() -> Vec<Spot> {
         },
         Spot {
             name: "Farø".to_string(),
-            latitude: 54.942552,
+            latitude: 54.942_55,
             longitude: 12.001952,
             directions: vec![
                 Direction {
@@ -64,5 +64,5 @@ pub fn get_spots() -> Vec<Spot> {
         },
     ];
 
-    return spots;
+    spots
 }

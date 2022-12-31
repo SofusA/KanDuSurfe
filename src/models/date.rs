@@ -55,7 +55,7 @@ impl CompareDates for DateSpan {
             return false;
         }
 
-        return true;
+        true
     }
 }
 
@@ -70,31 +70,13 @@ mod tests {
             end_date: Date { day: 10, month: 4 },
         };
 
-        assert_eq!(
-            test_dates_same_year.is_between_dates(&Date { day: 2, month: 2 }),
-            true
-        );
-        assert_eq!(
-            test_dates_same_year.is_between_dates(&Date { day: 9, month: 4 }),
-            true
-        );
-        assert_eq!(
-            test_dates_same_year.is_between_dates(&Date { day: 10, month: 4 }),
-            true
-        );
-        assert_eq!(
-            test_dates_same_year.is_between_dates(&Date { day: 1, month: 1 }),
-            true
-        );
+        assert!(test_dates_same_year.is_between_dates(&Date { day: 2, month: 2 }));
+        assert!(test_dates_same_year.is_between_dates(&Date { day: 9, month: 4 }));
+        assert!(test_dates_same_year.is_between_dates(&Date { day: 10, month: 4 }));
+        assert!(test_dates_same_year.is_between_dates(&Date { day: 1, month: 1 }));
 
-        assert_eq!(
-            test_dates_same_year.is_between_dates(&Date { day: 2, month: 5 }),
-            false
-        );
-        assert_eq!(
-            test_dates_same_year.is_between_dates(&Date { day: 11, month: 4 }),
-            false
-        );
+        assert!(!test_dates_same_year.is_between_dates(&Date { day: 2, month: 5 }));
+        assert!(!test_dates_same_year.is_between_dates(&Date { day: 11, month: 4 }));
     }
 
     #[test]
@@ -104,26 +86,11 @@ mod tests {
             end_date: Date { day: 15, month: 7 },
         };
 
-        assert_eq!(
-            test_dates_multi_year.is_between_dates(&Date { day: 10, month: 2 }),
-            true
-        );
-        assert_eq!(
-            test_dates_multi_year.is_between_dates(&Date { day: 2, month: 12 }),
-            true
-        );
-        assert_eq!(
-            test_dates_multi_year.is_between_dates(&Date { day: 2, month: 5 }),
-            true
-        );
-        assert_eq!(
-            test_dates_multi_year.is_between_dates(&Date { day: 20, month: 8 }),
-            false
-        );
-        assert_eq!(
-            test_dates_multi_year.is_between_dates(&Date { day: 20, month: 2 }),
-            true
-        );
+        assert!(test_dates_multi_year.is_between_dates(&Date { day: 10, month: 2 }));
+        assert!(test_dates_multi_year.is_between_dates(&Date { day: 2, month: 12 }));
+        assert!(test_dates_multi_year.is_between_dates(&Date { day: 2, month: 5 }));
+        assert!(!test_dates_multi_year.is_between_dates(&Date { day: 20, month: 8 }));
+        assert!(test_dates_multi_year.is_between_dates(&Date { day: 20, month: 2 }));
     }
 
     #[test]
@@ -133,9 +100,6 @@ mod tests {
             end_date: Date { day: 15, month: 7 },
         };
 
-        assert_eq!(
-            test_dates_multi_year.is_between_dates(&Date { day: 20, month: 2 }),
-            true
-        );
+        assert!(test_dates_multi_year.is_between_dates(&Date { day: 20, month: 2 }));
     }
 }

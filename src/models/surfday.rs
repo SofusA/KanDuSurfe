@@ -27,6 +27,6 @@ impl ResponseType for SurfDay {
             spots: sorted_spot_names,
         };
 
-        return response;
+        response
     }
 }

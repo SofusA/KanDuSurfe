@@ -12,7 +12,7 @@ pub async fn get_response() -> Result<impl warp::Reply, Infallible> {
     let yr_forecast: YrForecast = ForecastProvider::new();
     let response = get_forecast_from_provider(yr_forecast).await;
 
-    return Ok(serialise_forecast_to_string(response));
+    Ok(serialise_forecast_to_string(response))
 }
 
 struct YrForecast {}
@@ -37,7 +37,7 @@ impl ForecastProvider for YrForecast {
     }
 
     fn new() -> YrForecast {
-        return YrForecast {};
+        YrForecast {}
     }
 }
 

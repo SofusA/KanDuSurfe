@@ -30,9 +30,9 @@ impl ForecastProvider for TestForecast {
     }
 
     fn new() -> TestForecast {
-        return TestForecast {
+        TestForecast {
             timeseries: Vec::new(),
-        };
+        }
     }
 }
 
@@ -92,14 +92,8 @@ mod tests {
         let forcast_day = forecast.first().unwrap();
 
         assert_eq!(forcast_day.day, "2022-09-20");
-        assert_eq!(
-            forcast_day.spots.contains(&"Amager Strandpark".to_string()),
-            true
-        );
-        assert_eq!(
-            forcast_day.spots.contains(&"Sydvestpynten".to_string()),
-            false
-        );
+        assert!(forcast_day.spots.contains(&"Amager Strandpark".to_string()));
+        assert!(!forcast_day.spots.contains(&"Sydvestpynten".to_string()));
     }
 
     #[tokio::test]
@@ -152,14 +146,11 @@ mod tests {
 
         println!("{:?}", forecast);
 
-        assert_eq!(
-            forecast
-                .first()
-                .unwrap()
-                .spots
-                .contains(&"Poppelvej".to_string()),
-            false
-        );
+        assert!(!forecast
+            .first()
+            .unwrap()
+            .spots
+            .contains(&"Poppelvej".to_string()));
     }
 
     #[tokio::test]
@@ -184,6 +175,6 @@ mod tests {
 
         println!("{:?}", forecast);
 
-        assert_eq!(forecast.is_empty(), true);
+        assert!(forecast.is_empty());
     }
 }
