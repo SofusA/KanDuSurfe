@@ -1,12 +1,12 @@
 use std::env;
-use std::net::Ipv4Addr;
-use warp::Filter;
+use std::net::SocketAddr;
+use axum::{routing::get, Router};
 
 use handler_lib::functions::get_response::get_response;
 
 #[tokio::main]
 async fn main() {
-    let api = warp::path!("api" / "v1").and_then(get_response);
+    let app = Router::new().route("/api/v1", get(get_response));
 
     let port_key = "FUNCTIONS_CUSTOMHANDLER_PORT";
     let port: u16 = match env::var(port_key) {
@@ -14,5 +14,10 @@ async fn main() {
         Err(_) => 3000,
     };
 
-    warp::serve(api).run((Ipv4Addr::LOCALHOST, port)).await
+    let addr = SocketAddr::from(([127, 0, 0, 1], port));
+
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
 }

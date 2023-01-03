@@ -3,16 +3,24 @@ use crate::models::forecast::ForecastProvider;
 use crate::models::spot::Spot;
 use crate::models::surfday::*;
 use async_trait::async_trait;
+
+use axum::{
+    http::StatusCode,
+    response::IntoResponse,
+    Json,
+};
+
 use reqwest::header::USER_AGENT;
-use std::convert::Infallible;
 
 use super::get_surfdays::get_surfdays;
 
-pub async fn get_response() -> Result<impl warp::Reply, Infallible> {
+pub async fn get_response() -> impl IntoResponse {
     let yr_forecast: YrForecast = ForecastProvider::new();
     let response = get_forecast_from_provider(yr_forecast).await;
 
-    Ok(serialise_forecast_to_string(response))
+    // Ok(serialise_forecast_to_string(response))
+
+    (StatusCode::CREATED, Json(response))
 }
 
 struct YrForecast {}
@@ -44,8 +52,4 @@ impl ForecastProvider for YrForecast {
 pub async fn get_forecast_from_provider(provider: impl ForecastProvider) -> Vec<SurfDayResponse> {
     let surf_days = get_surfdays(provider).await;
     surf_days.iter().map(|x| x.to_response()).collect()
-}
-
-fn serialise_forecast_to_string(forecast: Vec<SurfDayResponse>) -> String {
-    serde_json::to_string(&forecast).expect("Failed serialising json")
 }
