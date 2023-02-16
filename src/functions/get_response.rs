@@ -11,7 +11,7 @@ use super::get_surfdays::get_surfdays;
 
 pub async fn get_response() -> impl IntoResponse {
     match get_serialized_forecast().await {
-        Ok(res) => (StatusCode::OK, serde_json::to_string(&res).unwrap()),
+        Ok(res) => (StatusCode::OK, res),
         Err(err) => (StatusCode::BAD_GATEWAY, err.to_string()),
     }
 }
