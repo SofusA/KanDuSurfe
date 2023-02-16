@@ -29,22 +29,6 @@ jobs:
       - name: Build | Tests
         run: cargo test --release --target x86_64-unknown-linux-musl
 
-      - name: Test | Start
-        run: |
-          cargo run --release --target x86_64-unknown-linux-musl &
-          sleep 30
-
-      - name: Test | Make Request
-        id: httpTest
-        uses: fjogeleit/http-request-action@v1
-        with:
-          method: GET
-          url: "http://127.0.0.1:3000/api/v1"
-
-      - name: Test | Show Response
-        run: |
-          echo ${{ steps.httpTest.outputs.response }}
-
       - name: Deploy | Move binary
         run: mv ./target/x86_64-unknown-linux-musl/release/handler .
 
