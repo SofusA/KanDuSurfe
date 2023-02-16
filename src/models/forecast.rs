@@ -1,10 +1,11 @@
 use super::spot::Spot;
+use anyhow::Result;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 
 #[async_trait]
 pub trait ForecastProvider {
-    async fn get_forecast(&self, spot: &Spot) -> ForeCastRoot;
+    async fn get_forecast(&self, spot: &Spot) -> Result<ForeCastRoot>;
     fn new() -> Self;
 }
 

@@ -14,6 +14,16 @@ pub fn get_spots() -> Vec<Spot> {
             inactive_dates: vec![],
         },
         Spot {
+            name: "Dalby Huse".to_string(),
+            latitude: 55.822_58,
+            longitude: 12.558465,
+            directions: vec![Direction {
+                minimum: 270,
+                maximum: 350,
+            }],
+            inactive_dates: vec![],
+        },
+        Spot {
             name: "Amager Strandpark".to_string(),
             latitude: 55.653506,
             longitude: 12.645545,

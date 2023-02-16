@@ -1,3 +1,4 @@
+use anyhow::Result;
 use chrono::{DateTime, Datelike, FixedOffset, Timelike};
 use std::collections::HashSet;
 
@@ -8,7 +9,7 @@ use crate::models::spot::Direction;
 use crate::models::surf_constants::SurfConstants;
 use crate::models::surfday::SurfDay;
 
-pub async fn get_surfdays(provider: impl ForecastProvider) -> Vec<SurfDay> {
+pub async fn get_surfdays(provider: impl ForecastProvider) -> Result<Vec<SurfDay>> {
     let mut response = Vec::<SurfDay>::new();
     let spots = get_spots();
     let surf_constants = SurfConstants {
@@ -23,7 +24,7 @@ pub async fn get_surfdays(provider: impl ForecastProvider) -> Vec<SurfDay> {
 
         let mut continuos_counter = 0;
 
-        for timeserie in forecast.properties.timeseries {
+        for timeserie in forecast?.properties.timeseries {
             let date_time =
                 DateTime::parse_from_rfc3339(&timeserie.time).expect("Error reading time format");
 
@@ -80,7 +81,7 @@ pub async fn get_surfdays(provider: impl ForecastProvider) -> Vec<SurfDay> {
 
     response.sort_by_key(|x| x.day);
 
-    response
+    Ok(response)
 }
 
 fn is_date_in_inactive_dates(

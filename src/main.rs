@@ -1,6 +1,6 @@
+use axum::{routing::get, Router};
 use std::env;
 use std::net::SocketAddr;
-use axum::{routing::get, Router};
 
 use handler_lib::functions::get_response::get_response;
 

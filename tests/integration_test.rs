@@ -1,4 +1,6 @@
+use anyhow::Result;
 use async_trait::async_trait;
+
 use handler_lib::{
     functions::get_response::get_forecast_from_provider,
     models::{
@@ -19,14 +21,14 @@ impl TestForecast {
 
 #[async_trait]
 impl ForecastProvider for TestForecast {
-    async fn get_forecast(&self, _spot: &Spot) -> ForeCastRoot {
+    async fn get_forecast(&self, _spot: &Spot) -> Result<ForeCastRoot> {
         let forecast_root = ForeCastRoot {
             properties: Properties {
                 timeseries: self.timeseries.clone(),
             },
         };
 
-        return forecast_root;
+        Ok(forecast_root)
     }
 
     fn new() -> TestForecast {
@@ -88,7 +90,10 @@ mod tests {
             },
         ]);
 
-        let forecast = get_forecast_from_provider(test_forecast_provider).await;
+        let forecast = get_forecast_from_provider(test_forecast_provider)
+            .await
+            .unwrap();
+
         let forcast_day = forecast.first().unwrap();
 
         assert_eq!(forcast_day.day, "2022-09-20");
@@ -147,6 +152,7 @@ mod tests {
         println!("{:?}", forecast);
 
         assert!(!forecast
+            .unwrap()
             .first()
             .unwrap()
             .spots
@@ -175,6 +181,6 @@ mod tests {
 
         println!("{:?}", forecast);
 
-        assert!(forecast.is_empty());
+        assert!(forecast.unwrap().is_empty());
     }
 }
